@@ -1,6 +1,6 @@
 # Description
 
-This repository is meant to serve as a general template for how to set up new repositories in the JogetOSS organization. 
+The Dynamic Options Select Box is a select box that retrieves existing options and enables users to create a new record using an existing form.
 
 # Getting Help
 
