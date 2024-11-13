@@ -4,7 +4,7 @@
     <groupId>org.joget.marketplace</groupId>
     <artifactId>dynamic-options-selectbox</artifactId>
     <packaging>bundle</packaging>
-    <version>8.0.0</version>
+    <version>8.0.1</version>
     <name>dynamic-options-selectbox</name>
     <url>http://www.joget.org</url>
     <build>

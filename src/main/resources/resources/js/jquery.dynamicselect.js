@@ -47,11 +47,11 @@
                     }
 
                     button += '>' +options.buttonLabel+'</button>';
-                    $(".dynamicselect_addbutton select").after(button);
+                    $(this).closest(".dynamicselect_addbutton select").after(button);
                 }
                 
                 if (!readOnly) {
-                    var button = $(".dynamicselect_addbutton select").next(".selector_button");
+                    var button = $(this).closest(".dynamicselect_addbutton select").next(".selector_button");
                     $(button).click(function() {
                         methods.add.apply(element);
                         //focus on 1st foucusable element when popup opened
@@ -117,7 +117,7 @@
                         JPopup.hide(frameId);
                     } else if (response.result === "failed") {
                         JPopup.hide(frameId);
-                        var button = $(".dynamicselect_addbutton select").next(".selector_button");
+                        var button = $(this).closest(".dynamicselect_addbutton select").next(".selector_button");
                         button.after("<div style='color: red;' class='col-sm-auto error-message'>Error adding record.</div>");
                     }
                 }

@@ -68,7 +68,7 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
     @Override
     public String getVersion() {
-        return "8.0.0";
+        return "8.0.1";
     }
 
     @Override
@@ -337,7 +337,6 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
             String formDefId = "";
             JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
             String recordId = jsonObject.get("id").getAsString();
-            String name = jsonObject.get("name").getAsString();
             if (jsonObject.has("_tempRequestParamsMap") && !jsonObject.get("_tempRequestParamsMap").isJsonNull()) {
                 JsonObject tempParams = jsonObject.getAsJsonObject("_tempRequestParamsMap");
                 
