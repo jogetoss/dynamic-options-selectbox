@@ -49,7 +49,6 @@
          {
             "name":"listId",
             "label":"@@form.dynamicoptionsselectbox.listId@@",
-            "description":"@@form.dynamicoptionsselectbox.listId.desc@@",
             "type":"selectbox",
             "required":"True",
             "options_ajax":"[CONTEXT_PATH]/web/json/console/app[APP_PATH]/datalist/options"

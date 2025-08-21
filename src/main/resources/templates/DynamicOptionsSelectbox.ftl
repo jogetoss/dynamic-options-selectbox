@@ -16,6 +16,8 @@
     <#else>
         <#if !(request.getAttribute("org.joget.marketplace.DynamicOptionsSelectbox_EDITABLE")??) >
             <script type="text/javascript" src="${request.contextPath}/plugin/org.joget.marketplace.DynamicOptionsSelectbox/js/jquery.dynamicselect.js"></script>
+            <script type="text/javascript" src="${request.contextPath}/js/chosen/chosen.jquery.js"></script>
+            <link rel="stylesheet" type="text/css" href="${request.contextPath}/js/chosen/chosen.css" />
         </#if>
             <label class="label">${element.properties.label!} <span class="form-cell-validator">${decoration}</span><#if error??> <span class="form-error-message">${error}</span></#if></label>
             <div class="container-fluid dynamicselect_addbutton">

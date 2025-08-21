@@ -33,6 +33,38 @@
                     readOnly = true;
                 }
 
+
+                // add chosen
+                var width = "40%";
+                if (options && options.width !== undefined &&  options.width !== "") {
+                    width = options.width;
+                }
+                if ($(window).width() <= 767) {
+                    width = "100%";
+                }
+
+                if ($("body").hasClass("rtl")) {
+                    $(element).addClass("chosen-rtl");
+                }
+                
+                var getPlaceholder = function() {
+                    var placeholder = "";
+                    if ($(element).find("option[value=\"\"]").length > 0) {
+                        placeholder = $(element).find("option[value=\"\"]").text();
+                        $(element).find("option[value=\"\"]").text("");
+                    }
+                    if (placeholder === "") {
+                        placeholder = " ";
+                    }
+                    return placeholder;
+                };
+                
+                $(element).chosen({width: "50%", placeholder_text : getPlaceholder()});                
+
+                if (readOnly) {
+                    $(element).prop("disabled", true).trigger("chosen:updated").prop("disabled", false);
+                }
+
                 //create new button
                 var button = "";
                 if (!readOnly) {
@@ -47,11 +79,9 @@
                     }
 
                     button += '>' +options.buttonLabel+'</button>';
-                    $(this).closest(".dynamicselect_addbutton select").after(button);
-                }
-                
-                if (!readOnly) {
-                    var button = $(this).closest(".dynamicselect_addbutton select").next(".selector_button");
+                    $(this).closest(".dynamicselect_addbutton").find(".chosen-container").after(button);
+
+                    var button = $(this).closest(".dynamicselect_addbutton").find(".chosen-container").next(".selector_button");
                     $(button).click(function() {
                         methods.add.apply(element);
                         //focus on 1st foucusable element when popup opened
@@ -117,7 +147,7 @@
                         JPopup.hide(frameId);
                     } else if (response.result === "failed") {
                         JPopup.hide(frameId);
-                        var button = $(this).closest(".dynamicselect_addbutton select").next(".selector_button");
+                        var button = $(this).closest(".dynamicselect_addbutton").find(".chosen-container").next(".selector_button");
                         button.after("<div style='color: red;' class='col-sm-auto error-message'>Error adding record.</div>");
                     }
                 }
@@ -162,7 +192,7 @@
                 val.push(value);
                 $(element).val(val);
                 
-                
+                $(element).trigger("chosen:updated");
                 methods.refresh.apply(element);
                 $("[name=" + $(element).data("fieldName") + "]").trigger("change");
                 

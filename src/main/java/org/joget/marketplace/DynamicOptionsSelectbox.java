@@ -68,7 +68,7 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
     @Override
     public String getVersion() {
-        return "8.0.1";
+        return "8.0.2";
     }
 
     @Override
@@ -278,7 +278,8 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
             if (idField == null || idField.isEmpty()) {
                 idField = binder.getPrimaryKeyColumnName();
             }
-            rows = binder.getData(dataList, binder.getProperties(), null, null, null, null, null); 
+            String displayField = getPropertyString("displayField");
+            rows = binder.getData(dataList, binder.getProperties(), null, displayField, false, null, null); 
         }
         return rows;
     }
