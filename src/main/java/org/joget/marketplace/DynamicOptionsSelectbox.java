@@ -13,6 +13,7 @@ import org.joget.apps.app.dao.DatalistDefinitionDao;
 import org.joget.apps.app.model.DatalistDefinition;
 import org.joget.apps.datalist.model.DataListBinder;
 import org.joget.apps.datalist.model.DataListCollection;
+import org.joget.apps.datalist.model.DataListFilterQueryObject;
 import org.joget.apps.datalist.service.DataListService;
 import org.joget.apps.form.lib.SelectBox;
 import org.joget.apps.form.model.Element;
@@ -279,7 +280,8 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
                 idField = binder.getPrimaryKeyColumnName();
             }
             String displayField = getPropertyString("displayField");
-            rows = binder.getData(dataList, binder.getProperties(), null, displayField, false, null, null); 
+            DataListFilterQueryObject[] filterQueryObjects = new ArrayList<>().toArray(new DataListFilterQueryObject[0]);
+            rows = binder.getData(dataList, binder.getProperties(), filterQueryObjects, displayField, false, null, null);
         }
         return rows;
     }
