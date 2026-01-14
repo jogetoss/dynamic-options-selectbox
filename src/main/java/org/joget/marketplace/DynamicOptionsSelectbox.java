@@ -13,6 +13,7 @@ import org.joget.apps.app.dao.DatalistDefinitionDao;
 import org.joget.apps.app.model.DatalistDefinition;
 import org.joget.apps.datalist.model.DataListBinder;
 import org.joget.apps.datalist.model.DataListCollection;
+import org.joget.apps.datalist.model.DataListFilterQueryObject;
 import org.joget.apps.datalist.service.DataListService;
 import org.joget.apps.form.lib.SelectBox;
 import org.joget.apps.form.model.Element;
@@ -68,7 +69,7 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
     @Override
     public String getVersion() {
-        return "8.0.2";
+        return "8.0.3";
     }
 
     @Override
@@ -245,28 +246,37 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
             //populate request params
             Object requestParamsProperty = getProperty("requestParams");
+            String[] paramName= null;
+            String[] paramValues = null;
             if (requestParamsProperty != null && requestParamsProperty instanceof Object[]) {
                 Form form = FormUtil.findRootForm(this);
 
-                for (Object param : ((Object[]) requestParamsProperty)) {
-                    Map paramMap = ((Map)param);
-                    String parameter = (String) paramMap.get("param");
-                    String fieldId = (String) paramMap.get("field");
-                    String defaultValue = (String) paramMap.get("defaultValue");
-                    String[] paramValues = null;
-                    String paramValue = "";
+                if (form != null){
+                    for (Object param : ((Object[]) requestParamsProperty)) {
+                        Map paramMap = ((Map)param);
+                        String parameter = (String) paramMap.get("param");
+                        String fieldId = (String) paramMap.get("field");
+                        String defaultValue = (String) paramMap.get("defaultValue");
+                        String strippedParam = parameter != null ? parameter.replaceAll("^d-\\d+-fn_", ""): null;
+                       
+                        String paramValue = "";
 
-                    if (fieldId != null && !fieldId.isEmpty()) {
-                        Element field = FormUtil.findElement(fieldId, form, formData);
-                        paramValues = FormUtil.getElementPropertyValues(field, formData);
+                        if (fieldId != null && !fieldId.isEmpty()) {
+                            Element field = FormUtil.findElement(fieldId, form, formData);
+                            paramValues = FormUtil.getElementPropertyValues(field, formData);
+                        }
+
+                        if (!(paramValues != null && paramValues.length > 0)) {
+                            paramValues = new String[]{defaultValue};
+                        }
+
+                        if (parameter != null) {
+                            paramName = new String[]{ strippedParam };
+                        }
+
+                        paramValue = FormUtil.generateElementPropertyValues(paramValues);
+                        json = json.replaceAll(StringUtil.escapeRegex("#requestParam."+parameter+"#"), StringUtil.escapeRegex(paramValue));
                     }
-
-                    if (!(paramValues != null && paramValues.length > 0)) {
-                        paramValues = new String[]{defaultValue};
-                    }
-
-                    paramValue = FormUtil.generateElementPropertyValues(paramValues);
-                    json = json.replaceAll(StringUtil.escapeRegex("#requestParam."+parameter+"#"), StringUtil.escapeRegex(paramValue));
                 }
             }
 
@@ -275,11 +285,43 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
             DataListBinder binder = dataList.getBinder();
             idField = getPropertyString("idField");
-            if (idField == null || idField.isEmpty()) {
-                idField = binder.getPrimaryKeyColumnName();
+            if (binder != null) {
+                Collection<DataListFilterQueryObject> queries = new ArrayList<DataListFilterQueryObject>();
+                DataListFilterQueryObject[] datalistFilter = dataList.getFilterQueryObjects();
+                queries.addAll(Arrays.asList(datalistFilter));
+
+                if (idField == null || idField.isEmpty()) {
+                    idField = binder.getPrimaryKeyColumnName();
+                }
+                
+                //the query should be `where filter clauses and (existing values or keyword)`
+                String query = "";
+                List<String> values = new ArrayList<String>();
+                if (paramValues != null && paramValues.length > 0 && !(paramValues.length == 1 && paramValues[0].isEmpty())) {
+                    for (String v : paramValues) {
+                        if (!v.isEmpty()) {
+                            if (!query.isEmpty()) {
+                                query += ", ";
+                            }
+                            query += "?";
+                            values.add(v);
+                        }
+                    }
+                    if (!query.isEmpty()) {
+                        query = binder.getColumnName(paramName[0]) + " in (" + query + ")";
+                    }
+                }
+                
+                if (!query.isEmpty()) {
+                    DataListFilterQueryObject queryObject = new DataListFilterQueryObject();
+                    queryObject.setOperator("AND");
+                    queryObject.setQuery("(" + query + ")");
+                    queryObject.setValues(values.toArray(new String[0]));
+                    queries.add(queryObject);
+                }
+
+                rows = binder.getData(dataList, binder.getProperties(), queries.toArray(new DataListFilterQueryObject[0]), null, null, null, null);
             }
-            String displayField = getPropertyString("displayField");
-            rows = binder.getData(dataList, binder.getProperties(), null, displayField, false, null, null); 
         }
         return rows;
     }
