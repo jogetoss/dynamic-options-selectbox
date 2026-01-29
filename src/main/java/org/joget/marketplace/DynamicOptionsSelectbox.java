@@ -69,7 +69,7 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
     @Override
     public String getVersion() {
-        return "8.0.3";
+        return "8.0.4";
     }
 
     @Override
@@ -298,18 +298,26 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
                 String query = "";
                 List<String> values = new ArrayList<String>();
                 if (paramValues != null && paramValues.length > 0 && !(paramValues.length == 1 && paramValues[0].isEmpty())) {
+                    String column = binder.getColumnName(paramName[0]);
+                    List<String> conditions = new ArrayList<>();
+
                     for (String v : paramValues) {
                         if (!v.isEmpty()) {
-                            if (!query.isEmpty()) {
-                                query += ", ";
-                            }
-                            query += "?";
+                            conditions.add(
+                                "(" + column + " = ? " +
+                                "OR " + column + " LIKE ? " +
+                                "OR " + column + " LIKE ? " +
+                                "OR " + column + " LIKE ?)"
+                            );
+
                             values.add(v);
+                            values.add(v + ";%");
+                            values.add("%;" + v + ";%");
+                            values.add("%;" + v);
                         }
                     }
-                    if (!query.isEmpty()) {
-                        query = binder.getColumnName(paramName[0]) + " in (" + query + ")";
-                    }
+
+                    query = String.join(" OR ", conditions);
                 }
                 
                 if (!query.isEmpty()) {
@@ -412,6 +420,7 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
                         LogUtil.error(getClassName(), e, "");
                         jsonResult.put("result", "failed");
                     }
+                    FormUtil.executePostFormSubmissionProccessor(form, formData);
                 } else {
                     jsonResult.put("result", "failed");
                 }
