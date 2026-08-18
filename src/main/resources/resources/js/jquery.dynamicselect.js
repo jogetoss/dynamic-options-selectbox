@@ -150,52 +150,61 @@
                         var button = $(this).closest(".dynamicselect_addbutton").find(".chosen-container").next(".selector_button");
                         button.after("<div style='color: red;' class='col-sm-auto error-message'>Error adding record.</div>");
                     }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log("[dynamicselect] submitForm AJAX error:", textStatus, errorThrown);
                 }
             });
         },
-        
+
         addOption: function(args) {
             return this.each(function() {
                 var frameId = methods.getFrameId($(this).attr("id"));
-                
+
                 var element = $(this);
                 var primaryKey = $(element).data("primaryKey");
                 var idField = $(element).data("idField");
                 var displayField = $(element).data("displayField");
-                var obj = eval("[" + args.result + "]");
-                    
-                var value = args.id;
-                if (idField != "") {
-                    value = obj[0][idField];
-                }
-                //check option exist, if not, add it
-                if ($(element).find("option[value=\""+value+"\"]").length == 0) {
-                    var label = obj[0][displayField];
-                    var option = $("<option></option>");
-                    option.attr("value", value);
-                    option.html(label);
-                    $(element).append(option);
-                }
-                
-                // select option
-                var val = $(element).val();
-                if (typeof val == "string") {
-                    var previous = val;
-                    val = new Array();
-                    
-                    if (element.attr("multiple")) {
-                        val.push(previous);
+
+                try {
+                    var obj = eval("[" + args.result + "]");
+
+                    var value = obj[0]["id"];
+                    if (idField != "") {
+                        value = obj[0][idField];
                     }
-                } else if (!val) {
-                    val = new Array();
+
+                    //check option exist, if not, add it
+                    if ($(element).find("option[value=\""+value+"\"]").length == 0) {
+                        var label = obj[0][displayField];
+                        var option = $("<option></option>");
+                        option.attr("value", value);
+                        option.html(label);
+                        $(element).append(option);
+                    }
+
+                    // select option
+                    var val = $(element).val();
+                    if (typeof val == "string") {
+                        var previous = val;
+                        val = new Array();
+
+                        if (element.attr("multiple")) {
+                            val.push(previous);
+                        }
+                    } else if (!val) {
+                        val = new Array();
+                    }
+                    val.push(value);
+                    $(element).val(val);
+
+                    $(element).trigger("chosen:updated");
+                    methods.refresh.apply(element);
+                    $("[name=" + $(element).data("fieldName") + "]").trigger("change");
+                } catch (e) {
+                    console.log("[dynamicselect] addOption error:", e);
                 }
-                val.push(value);
-                $(element).val(val);
-                
-                $(element).trigger("chosen:updated");
-                methods.refresh.apply(element);
-                $("[name=" + $(element).data("fieldName") + "]").trigger("change");
-                
+
                 // JPopup.hide(frameId);
             });
         },
