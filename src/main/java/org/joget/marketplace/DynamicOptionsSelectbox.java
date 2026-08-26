@@ -69,7 +69,7 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
 
     @Override
     public String getVersion() {
-        return "8.0.6";
+        return "8.0.7";
     }
 
     @Override
@@ -146,7 +146,29 @@ public class DynamicOptionsSelectbox extends SelectBox implements FormBuilderPal
                 dataModel.put("requestParams", requestJson);
             }
         }
-        
+
+        Object popupRequestParamsProperty = getProperty("popupRequestParams");
+        if (popupRequestParamsProperty != null && popupRequestParamsProperty instanceof Object[]) {
+            String popupRequestJson = "[";
+            for (Object param : ((Object[]) popupRequestParamsProperty)) {
+                Map paramMap = ((Map)param);
+
+                if (popupRequestJson.length() > 1) {
+                    popupRequestJson += ",";
+                }
+                popupRequestJson += "{";
+                popupRequestJson += "param:'" + paramMap.get("param") + "',";
+                popupRequestJson += "field:'" + paramMap.get("field") + "',";
+                popupRequestJson += "defaultValue:'" + paramMap.get("defaultValue") + "'";
+                popupRequestJson += "}";
+            }
+            popupRequestJson += "]";
+
+            if (popupRequestJson.length() > 2) {
+                dataModel.put("popupRequestParams", popupRequestJson);
+            }
+        }
+
         Form form = getForm(getPropertyString("formDefId"));
    
         if (form != null) {

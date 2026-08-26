@@ -19,6 +19,7 @@
                 $(this).data('displayField', options.displayField);
                 $(this).data('type', (options.multiple == "true")? "" : "single");
                 $(this).data('requestParams', options.requestParams);
+                $(this).data('popupRequestParams', options.popupRequestParams);
                 $(this).data('width', options.width);
                 $(this).data('height', options.height);
                 $(this).data('nonce', options.nonce);
@@ -117,6 +118,14 @@
             var width = $(this).data('width');
             var height = $(this).data('height');
             var url = contextPath+'/web/app/'+$(this).data('appId')+'/'+$(this).data('appVersion')+'/form/embed?_submitButtonLabel=Submit' + UI.userviewThemeParams();
+
+            var popupRequestParams = $(this).data('popupRequestParams');
+            if (popupRequestParams !== undefined) {
+                var requestParamsQueryString = FormUtil.getFieldsAsUrlQueryString(popupRequestParams, $(this).closest("form"));
+                if (requestParamsQueryString !== "") {
+                    url += "&" + requestParamsQueryString;
+                }
+            }
 
             var vars = {
                 _callback : id+"___"+$(this).data('formDefId'),

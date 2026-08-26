@@ -50,7 +50,8 @@
                     multiple: "${element.properties.multiple!}",
                     buttonPrimary: "${element.properties.buttonPrimary!}",
                     buttonInlineStyle: "${element.properties.buttonInlineStyle!}",
-                    <#if requestParams??>requestParams:${requestParams}</#if>
+                    <#if requestParams??>requestParams:${requestParams},</#if>
+                    <#if popupRequestParams??>popupRequestParams:${popupRequestParams}</#if>
                 });
                 $("#dynamicselect_${element.properties.elementUniqueKey!}[name='${elementParamName!}']").dynamicselect("initPopupDialog", {contextPath: "${request.contextPath}"});
             });

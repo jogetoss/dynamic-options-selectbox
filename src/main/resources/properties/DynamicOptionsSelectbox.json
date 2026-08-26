@@ -30,6 +30,26 @@
             "required":"True"
             },
             {
+            "name":"popupRequestParams",
+            "label":"@@form.dynamicoptionsselectbox.popupRequestParam@@",
+            "type":"grid",
+            "columns":[
+                    {
+                  "key":"param",
+                  "label":"@@form.dynamicoptionsselectbox.Parameter@@"
+                    },
+                    {
+                  "key":"field",
+                  "label":"@@form.dynamicoptionsselectbox.field@@",
+                  "options_callback":"FormBuilder.getFieldOptions"
+                    },
+                    {
+                  "key":"defaultValue",
+                  "label":"@@form.dynamicoptionsselectbox.defaultValue@@"
+                    }
+                ]
+            },
+            {
             "name":"idField",
             "label":"@@form.dynamicoptionsselectbox.idField@@",
             "description":"@@form.dynamicoptionsselectbox.idField.desc@@",
