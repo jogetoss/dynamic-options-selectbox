@@ -2,7 +2,7 @@
 
 The Dynamic Options Select Box is a select box that retrieves existing options and enables users to create a new record using an existing form.
 
-To setup and configure this plugin, please see the [documentation](https://dev.joget.org/community/display/marketplace/Dynamic+Options+Select+Box).
+To setup and configure this plugin, please see the [documentation](https://kb.joget.org/jw/web/userview/jdocs/docs/marketplace/dynamic-options-select-box).
 
 
 # Getting Help
